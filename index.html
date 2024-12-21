@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="dist/style/all.min.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>TODO LIST<span>待辦清單</span></h1>
+      <div class="card input">
+        <input
+          id="inputText"
+          type="text"
+          placeholder="請輸入(Enter鍵或右方按鈕送出)"
+        />
+        <a href="#" id="addBTN">+</a>
+      </div>
+      <div class="card card_list">
+        <ul class="tab" id="tab">
+          <li class="active" data-tab="all">全部</li>
+          <li data-tab="work">待完成</li>
+          <li data-tab="done">已完成</li>
+        </ul>
+        <div class="cart_content">
+          <ul id="todoList"><img src="/image/noTodo.jpg" alt="noTodo pic"></ul>
+          <div class="listFooter">
+            <p><span id="workNum">0</span> 個待完成項目</p>
+            <a href="#" id="deleteBTN">清除已完成(切換到"全部")</a>
+          </div>
+        </div>
+      </div>
+      <!-- <button id="clearLocalStorageBTN">清除儲存資料恢復預設內容</button> -->
+      
+    </div>
+    <script src="/script/all.js"></script>
+  </body>
+</html>
