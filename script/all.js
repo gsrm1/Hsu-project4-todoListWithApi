@@ -169,7 +169,7 @@ function getTodo() {
       console.log(array);
       
       if (array.length === 0) {
-        todoList.innerHTML = `<img src="/image/noTodo.jpg" alt="noTodo pic"></img>`;
+        todoList.innerHTML = `<img src="image/noTodo.jpg" alt="noTodo pic"></img>`;
       } else {
         let str = '';
         let checkboxStatus = '';
