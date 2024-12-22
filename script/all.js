@@ -80,7 +80,6 @@ function signInFunc() {
     return;
   }
 }
-
 let token = '';
 const switchToTodo = document.querySelector('.switchToTodo');
 const signUp = document.querySelector('.signUp');
@@ -108,7 +107,6 @@ function axios_SignIn(emailSignIn, passwordSignIn) {
       } else {
         userWelcomeHint.innerHTML = '<p style="color: green;">匿名訪客</p>';
       }
-      getTodo();
       setTimeout(function (e) {
         signUp.classList.add('displayNone');
         todoListArea.classList.remove('displayNone');
@@ -136,8 +134,8 @@ function axios_logOut() {
   axios
     .delete(`${url}/users/sign_out`, {
       headers: {
-        Authorization: token
-      }
+        Authorization: token,
+      },
     })
     .then((response) => console.log(response))
     .catch((error) => console.log(error.response));
@@ -153,47 +151,8 @@ switchToSignIn3.addEventListener('click', function (e) {
     inputText.value = '';
   }
 });
-
-//render清單
-const addBtn = document.querySelector('#addBTN');
-const todoList = document.querySelector('#todoList');
-function getTodo() {
-  axios
-    .get(`${url}/todos`, {
-      headers: {
-        Authorization: token
-      }
-    })
-    .then((response) => {
-      let array = response.data.todos;
-      console.log(array);
-      
-      if (array.length === 0) {
-        todoList.innerHTML = `<img src="image/noTodo.jpg" alt="No todos to display">`;
-      } else {
-        let str = '';
-        let checkboxStatus = '';
-        array.forEach(function (item) {
-          if (item.completed_at === null) {
-            checkboxStatus = '';
-          } else {
-            checkboxStatus = 'checked';
-          }
-          str += `<li data-id="${item.id}"> <label class="checkbox">
-        <input type="checkbox" class="checkpoint" ${checkboxStatus}/>
-        <span>${item.content}</span>
-        </label>
-        <a href="#" class="edit">編輯</a>
-        <a href="#" class="delete"></a>
-        </li>`;
-        });
-        todoList.innerHTML = str;
-      }
-    })
-    .catch((error) => console.log(error.response));
-}
-
 //新增Todo
+const addBtn = document.querySelector('#addBTN');
 function addTodo(inputText) {
   axios
     .post(
@@ -205,8 +164,8 @@ function addTodo(inputText) {
       },
       {
         headers: {
-          Authorization: token
-        }
+          Authorization: token,
+        },
       }
     )
     .then(() => updateList())
@@ -231,6 +190,7 @@ inputText.addEventListener('keypress', function (e) {
   }
 });
 //刪除、切換checked狀態、編輯（待完成）
+const todoList = document.querySelector('#todoList');
 todoList.addEventListener('click', multiFunc);
 function multiFunc(e) {
   let id = e.target.closest('li').dataset.id;
@@ -245,8 +205,8 @@ function deleteTodo(todoId) {
   axios
     .delete(`${url}/todos/${todoId}`, {
       headers: {
-        Authorization: token
-      }
+        Authorization: token,
+      },
     })
     .then(() => updateList())
     .catch((error) => console.log(error.response));
@@ -254,18 +214,23 @@ function deleteTodo(todoId) {
 function updateTodo(todoId) {
   axios
     .patch(
-      `${url}/todos/${todoId}/toggle`, {}, {
+      `${url}/todos/${todoId}/toggle`,
+      {},
+      {
         headers: {
-          Authorization: token
-        }
-      })
+          Authorization: token,
+        },
+      }
+    )
     .then(() => updateList())
     .catch((error) => console.log(error.response));
 }
-
 //切換tab並render清單
 const tab = document.querySelector('#tab');
 const tabLi = document.querySelectorAll('#tab li');
+let array = '';
+let array_tabWork = '';
+let todoLength = '';
 let toggleStatus = 'all';
 tab.addEventListener('click', changeTab);
 function changeTab(e) {
@@ -276,8 +241,8 @@ function changeTab(e) {
   e.target.classList.add('active');
   updateList();
 }
-
 function updateList() {
+  console.log(array);
   if (toggleStatus === 'all') {
     getTodo();
   } else if (toggleStatus === 'work') {
@@ -285,29 +250,66 @@ function updateList() {
   } else {
     getTodo_tabDone();
   }
-  const workNum = document.querySelector('#workNum');
-  let todoLength = todoData.filter((item) => item.checked === '');
-  workNum.textContent = todoLength.length;
-  renderList(showData);
-  localStorage.setItem('todoData', JSON.stringify(todoData));
-  //提交資料到localStorage
-  //stringify方法將JavaScript值轉換成JSON字串(String)
+  (function getWorkNum() {
+    axios
+      .get(`${url}/todos`, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        array = response.data.todos;
+        const workNum = document.querySelector('#workNum');
+        todoLength = array.filter((item) => item.completed_at === null);
+        workNum.textContent = todoLength.length;
+      })
+      .catch((error) => console.log(error.response));
+  }());//立即調用函式 IIFE
 }
-
+function getTodo() {
+  axios
+    .get(`${url}/todos`, {
+      headers: {
+        Authorization: token,
+      },
+    })
+    .then((response) => {
+      array = response.data.todos;
+      if (array.length === 0) {
+        todoList.innerHTML = `<img src="image/noTodo.jpg" alt="No todos to display">`;
+      } else {
+        let str = '';
+        let checkboxStatus = '';
+        array.forEach(function (item) {
+          if (item.completed_at === null) {
+            checkboxStatus = '';
+          } else {
+            checkboxStatus = 'checked';
+          }
+          str += `<li data-id="${item.id}"> <label class="checkbox">
+        <input type="checkbox" class="checkpoint" ${checkboxStatus}/>
+        <span>${item.content}</span>
+        </label>
+        <a href="#" class="edit">編輯</a>
+        <a href="#" class="delete"></a>
+        </li>`;
+        });
+        todoList.innerHTML = str;
+      }
+    })
+    .catch((error) => console.log(error.response));
+}
 function getTodo_tabWork() {
   axios
     .get(`${url}/todos`, {
       headers: {
-        Authorization: token
-      }
+        Authorization: token,
+      },
     })
     .then((response) => {
-      let array = response.data.todos;
-      console.log(array);
-      let array_tabWork = '';
-      array_tabWork = array.filter((item) => item.completed_at === null)
-      console.log(array_tabWork);
-      if ( array_tabWork.length === 0) {
+      array = response.data.todos;
+      array_tabWork = array.filter((item) => item.completed_at === null);
+      if (array_tabWork.length === 0) {
         todoList.innerHTML = `<img src="image/allDone.jpg" alt="Todos were all done">`;
       } else {
         let str = '';
@@ -331,21 +333,17 @@ function getTodo_tabWork() {
     })
     .catch((error) => console.log(error.response));
 }
-
 function getTodo_tabDone() {
   axios
     .get(`${url}/todos`, {
       headers: {
-        Authorization: token
-      }
+        Authorization: token,
+      },
     })
     .then((response) => {
-      let array = response.data.todos;
-      console.log(array);
-      let array_tabWork = '';
-      array_tabWork = array.filter((item) => item.completed_at !== null)
-      console.log(array_tabWork);
-      if ( array_tabWork.length === 0) {
+      array = response.data.todos;
+      array_tabWork = array.filter((item) => item.completed_at !== null);
+      if (array_tabWork.length === 0) {
         todoList.innerHTML = `<h2>目前沒有已完成事項！</h2>`;
       } else {
         let str = '';
@@ -369,7 +367,7 @@ function getTodo_tabDone() {
     })
     .catch((error) => console.log(error.response));
 }
-//印出初始清單
+//印出清單
 updateList();
 
 // //九、一鍵清除已完成清單
@@ -382,7 +380,6 @@ updateList();
 //     switchTabToAll();
 //   }
 // });
-
 // function switchTabToAll() {
 //   toggleStatus = 'all';
 //   tabLi.forEach(function (item) {
