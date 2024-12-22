@@ -80,7 +80,8 @@ function signInFunc() {
     return;
   }
 }
-// let token = '';
+
+let token = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4NDczIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzM0ODM1ODY0LCJleHAiOjE3MzYxMzE4NjQsImp0aSI6ImJhOGEzODljLWIxODUtNDVhMS05OTU5LTU2Zjg5NzZjZjg3MSJ9.-GlDQbxeR5TMyCSMvyLIin6hO0YCIX3FjrhYbuJdi7c';
 const switchToTodo = document.querySelector('.switchToTodo');
 const signUp = document.querySelector('.signUp');
 const todoListArea = document.querySelector('.todoListArea');
@@ -93,8 +94,8 @@ function axios_SignIn(emailSignIn, passwordSignIn) {
       },
     })
     .then(function (response) {
-      axios.defaults.headers.common['Authorization'] = response.headers.authorization;
-      // token = response.headers.authorization;
+      // axios.defaults.headers.common['Authorization'] = response.headers.authorization;
+      token = response.headers.authorization;
       passwordHint.innerHTML = `<p>123</p>`;
       emailHint.classList.add('emailHintShow');
       passwordHint.classList.remove('passwordHintShow');
@@ -133,7 +134,11 @@ switchToTodo.addEventListener('click', function (e) {
 //登出
 function axios_logOut() {
   axios
-    .delete(`${url}/users/sign_out`)
+    .delete(`${url}/users/sign_out`, {
+      headers: {
+        Authorization: token
+      }
+    })
     .then((response) => console.log(response))
     .catch((error) => console.log(error.response));
 }
@@ -148,14 +153,21 @@ switchToSignIn3.addEventListener('click', function (e) {
     inputText.value = '';
   }
 });
+
 //render清單
 const addBtn = document.querySelector('#addBTN');
 const todoList = document.querySelector('#todoList');
 function getTodo() {
   axios
-    .get(`${url}/todos`)
+    .get(`${url}/todos`, {
+      headers: {
+        Authorization: token
+      }
+    })
     .then((response) => {
       let array = response.data.todos;
+      console.log(array);
+      
       if (array.length === 0) {
         todoList.innerHTML = `<img src="/image/noTodo.jpg" alt="noTodo pic"></img>`;
       } else {
@@ -180,7 +192,7 @@ function getTodo() {
     })
     .catch((error) => console.log(error.response));
 }
-getTodo();
+
 //新增Todo
 function addTodo(inputText) {
   axios
@@ -190,9 +202,14 @@ function addTodo(inputText) {
         todo: {
           content: inputText.value,
         },
+      },
+      {
+        headers: {
+          Authorization: token
+        }
       }
     )
-    .then(() => getTodo())
+    .then(() => updateList())
     .catch((error) => console.log(error.response));
 }
 addBtn.addEventListener('click', function (e) {
@@ -226,65 +243,27 @@ function multiFunc(e) {
 }
 function deleteTodo(todoId) {
   axios
-    .delete(`${url}/todos/${todoId}`)
-    .then(() => getTodo())
+    .delete(`${url}/todos/${todoId}`, {
+      headers: {
+        Authorization: token
+      }
+    })
+    .then(() => updateList())
     .catch((error) => console.log(error.response));
 }
 function updateTodo(todoId) {
   axios
     .patch(
-      `${url}/todos/${todoId}/toggle`, {}
-    )
-    .then(() => getTodo())
+      `${url}/todos/${todoId}/toggle`, {}, {
+        headers: {
+          Authorization: token
+        }
+      })
+    .then(() => updateList())
     .catch((error) => console.log(error.response));
 }
-// 一、初始陣列(使用localStorage儲存資料在瀏覽器)
-// let todoData = localStorage.getItem("todoData"); //從updateList內取資料
-// todoData = todoData ? JSON.parse(todoData) : [
-//       { text: "學習JavaScript", id: new Date().getTime(), checked: "" },
-//       { text: "繳交TodoList作業", id: new Date().getTime() + 1, checked: "checked" },
-//       { text: "找到一份前端工程師工作", id: new Date().getTime() + 2, checked: "" }
-//     ];
-// let todoData = [];
-// //二、新增Todo
-// const addBtn = document.querySelector('#addBTN');
-// addBtn.addEventListener('click', function (e) {
-//   addTodo();
-// });
-// inputText.addEventListener('keypress', function (e) {
-//   if (e.key === 'Enter') {
-//     addTodo();
-//   }
-// });
-// function addTodo() {
-//   const todo = {
-//     text: inputText.value,
-//     id: new Date().getTime(),
-//     checked: '',
-//   };
-//   if (todo.text.trim() === '') {
-//     return alert('請輸入待辦事項！');
-//   }
-//   todoData.unshift(todo);
-//   inputText.value = '';
-//   switchTabToAll();
-// }
-// //三、渲染
-// const todoList = document.querySelector('#todoList');
-// function renderList(array) {
-//   let str = '';
-//   array.forEach(function (item) {
-//     str += `<li data-id="${item.id}">
-//     <label class="checkbox">
-//     <input type="checkbox" name="checkbox" ${item.checked}/>
-//     <span>${item.text}</span>
-//     </label>
-//     <a href="#" class="delete" ></a>
-//     </li>`;
-//   });
-//   todoList.innerHTML = str;
-// }
-//四、tab切換
+
+//切換tab並render清單
 const tab = document.querySelector('#tab');
 const tabLi = document.querySelectorAll('#tab li');
 let toggleStatus = 'all';
@@ -295,58 +274,104 @@ function changeTab(e) {
     item.classList.remove('active');
   });
   e.target.classList.add('active');
-  // updateList();
+  updateList();
 }
-// //五、刪除個別清單 & 切換checked狀態
-// todoList.addEventListener('click', deleteAndChecked);
-// function deleteAndChecked(e) {
-//   let id = e.target.closest('li').dataset.id;
-//   if (e.target.classList.value === 'delete') {
-//     e.preventDefault();
-//     todoData = todoData.filter((item) => item.id != id);
-//   } else {
-//     todoData.forEach(function (item, index) {
-//       if (item.id == id) {
-//         //id為字串需轉型故使用一般相等比較運算子
-//         if (todoData[index].checked === 'checked') {
-//           todoData[index].checked = '';
-//         } else {
-//           todoData[index].checked = 'checked';
-//         }
-//       }
-//     });
-//   }
-//   updateList();
-// }
-// //六、切換tab後更新清單
-// function updateList() {
-//   let showData = [];
-//   if (toggleStatus === 'all') {
-//     showData = todoData;
-//   } else if (toggleStatus === 'work') {
-//     showData = todoData.filter((item) => item.checked === '');
-//   } else {
-//     showData = todoData.filter((item) => item.checked === 'checked');
-//   }
-//   const workNum = document.querySelector('#workNum');
-//   let todoLength = todoData.filter((item) => item.checked === '');
-//   workNum.textContent = todoLength.length;
-//   renderList(showData);
-//   localStorage.setItem('todoData', JSON.stringify(todoData));
-//   //提交資料到localStorage
-//   //stringify方法將JavaScript值轉換成JSON字串(String)
-// }
-// //七、印出初始清單
-// updateList();
-// //八、切換tab到"全部"
-// function switchTabToAll() {
-//   toggleStatus = 'all';
-//   tabLi.forEach(function (item) {
-//     item.classList.remove('active');
-//   });
-//   tabFirstLi.classList.add('active');
-//   updateList();
-// }
+
+function updateList() {
+  if (toggleStatus === 'all') {
+    getTodo();
+  } else if (toggleStatus === 'work') {
+    getTodo_tabWork();
+  } else {
+    getTodo_tabDone();
+  }
+  const workNum = document.querySelector('#workNum');
+  let todoLength = todoData.filter((item) => item.checked === '');
+  workNum.textContent = todoLength.length;
+  renderList(showData);
+  localStorage.setItem('todoData', JSON.stringify(todoData));
+  //提交資料到localStorage
+  //stringify方法將JavaScript值轉換成JSON字串(String)
+}
+
+function getTodo_tabWork() {
+  axios
+    .get(`${url}/todos`, {
+      headers: {
+        Authorization: token
+      }
+    })
+    .then((response) => {
+      let array = response.data.todos;
+      console.log(array);
+      let array_tabWork = '';
+      array_tabWork = array.filter((item) => item.completed_at === null)
+      console.log(array_tabWork);
+      if ( array_tabWork.length === 0) {
+        todoList.innerHTML = `<img src="image/allDone.jpg" alt="noTodo pic"></img>`;
+      } else {
+        let str = '';
+        let checkboxStatus = '';
+        array_tabWork.forEach(function (item) {
+          if (item.completed_at === null) {
+            checkboxStatus = '';
+          } else {
+            checkboxStatus = 'checked';
+          }
+          str += `<li data-id="${item.id}"> <label class="checkbox">
+        <input type="checkbox" class="checkpoint" ${checkboxStatus}/>
+        <span>${item.content}</span>
+        </label>
+        <a href="#" class="edit">編輯</a>
+        <a href="#" class="delete"></a>
+        </li>`;
+        });
+        todoList.innerHTML = str;
+      }
+    })
+    .catch((error) => console.log(error.response));
+}
+
+function getTodo_tabDone() {
+  axios
+    .get(`${url}/todos`, {
+      headers: {
+        Authorization: token
+      }
+    })
+    .then((response) => {
+      let array = response.data.todos;
+      console.log(array);
+      let array_tabWork = '';
+      array_tabWork = array.filter((item) => item.completed_at !== null)
+      console.log(array_tabWork);
+      if ( array_tabWork.length === 0) {
+        todoList.innerHTML = `<h2>目前沒有已完成事項！</h2>`;
+      } else {
+        let str = '';
+        let checkboxStatus = '';
+        array_tabWork.forEach(function (item) {
+          if (item.completed_at === null) {
+            checkboxStatus = '';
+          } else {
+            checkboxStatus = 'checked';
+          }
+          str += `<li data-id="${item.id}"> <label class="checkbox">
+        <input type="checkbox" class="checkpoint" ${checkboxStatus}/>
+        <span>${item.content}</span>
+        </label>
+        <a href="#" class="edit">編輯</a>
+        <a href="#" class="delete"></a>
+        </li>`;
+        });
+        todoList.innerHTML = str;
+      }
+    })
+    .catch((error) => console.log(error.response));
+}
+//印出初始清單
+updateList();
+
 // //九、一鍵清除已完成清單
 // const deleteBTN = document.querySelector('#deleteBTN');
 // const tabFirstLi = document.querySelector('#tab li');
@@ -357,25 +382,12 @@ function changeTab(e) {
 //     switchTabToAll();
 //   }
 // });
-// //十、清除localStorage儲存資料恢復預設清單
-// // const clearLocalStorageBTN = document.querySelector("#clearLocalStorageBTN");
-// // clearLocalStorageBTN.addEventListener("click", function (e) {
-// //   if (confirm("確定清除儲存資料恢復預設內容嗎？")) {
-// //     localStorage.removeItem("todoData");
-// //     todoData = [
-// //       { text: "學習JavaScript", id: new Date().getTime(), checked: "" },
-// //       {
-// //         text: "繳交TodoList作業",
-// //         id: new Date().getTime() + 1,
-// //         checked: "checked"
-// //       },
-// //       {
-// //         text: "找到一份前端工程師工作",
-// //         id: new Date().getTime() + 2,
-// //         checked: ""
-// //       }
-// //     ];
-// //     switchTabToAll();
-// //     alert("已清除儲存資料並恢復預設內容");
-// //   }
-// // });
+
+// function switchTabToAll() {
+//   toggleStatus = 'all';
+//   tabLi.forEach(function (item) {
+//     item.classList.remove('active');
+//   });
+//   tabFirstLi.classList.add('active');
+//   updateList();
+// }
