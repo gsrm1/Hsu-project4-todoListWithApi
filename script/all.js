@@ -93,6 +93,7 @@ function axios_SignIn(emailSignIn, passwordSignIn) {
       },
     })
     .then(function (response) {
+      console.log(response);
       // axios.defaults.headers.common['Authorization'] = response.headers.authorization;
       token = response.headers.authorization;
       passwordHint.innerHTML = `<p>123</p>`;
@@ -108,6 +109,7 @@ function axios_SignIn(emailSignIn, passwordSignIn) {
         userWelcomeHint.innerHTML = '<p style="color: green;">匿名訪客</p>';
       }
       setTimeout(function (e) {
+        updateList();//登入後印出清單
         signUp.classList.add('displayNone');
         todoListArea.classList.remove('displayNone');
         emailSignIn.value = '';
@@ -242,7 +244,6 @@ function changeTab(e) {
   updateList();
 }
 function updateList() {
-  console.log(array);
   if (toggleStatus === 'all') {
     getTodo();
   } else if (toggleStatus === 'work') {
@@ -367,8 +368,6 @@ function getTodo_tabDone() {
     })
     .catch((error) => console.log(error.response));
 }
-//印出清單
-updateList();
 
 // //九、一鍵清除已完成清單
 // const deleteBTN = document.querySelector('#deleteBTN');
