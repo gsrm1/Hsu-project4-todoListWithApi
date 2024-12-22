@@ -169,7 +169,7 @@ function getTodo() {
       console.log(array);
       
       if (array.length === 0) {
-        todoList.innerHTML = `<img src="image/noTodo.jpg" alt="noTodo pic"></img>`;
+        todoList.innerHTML = `<img src="image/noTodo.jpg" alt="No todos to display">`;
       } else {
         let str = '';
         let checkboxStatus = '';
@@ -308,7 +308,7 @@ function getTodo_tabWork() {
       array_tabWork = array.filter((item) => item.completed_at === null)
       console.log(array_tabWork);
       if ( array_tabWork.length === 0) {
-        todoList.innerHTML = `<img src="image/allDone.jpg" alt="noTodo pic"></img>`;
+        todoList.innerHTML = `<img src="image/allDone.jpg" alt="Todos were all done">`;
       } else {
         let str = '';
         let checkboxStatus = '';
