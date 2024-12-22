@@ -81,7 +81,7 @@ function signInFunc() {
   }
 }
 
-let token = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4NDczIiwic2NwIjoidXNlciIsImF1ZCI6bnVsbCwiaWF0IjoxNzM0ODM1ODY0LCJleHAiOjE3MzYxMzE4NjQsImp0aSI6ImJhOGEzODljLWIxODUtNDVhMS05OTU5LTU2Zjg5NzZjZjg3MSJ9.-GlDQbxeR5TMyCSMvyLIin6hO0YCIX3FjrhYbuJdi7c';
+let token = '';
 const switchToTodo = document.querySelector('.switchToTodo');
 const signUp = document.querySelector('.signUp');
 const todoListArea = document.querySelector('.todoListArea');
