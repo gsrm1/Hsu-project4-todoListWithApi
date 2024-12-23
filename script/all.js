@@ -13,7 +13,7 @@ switchToSignIn2.addEventListener('click', function (e) {
   signArea2.classList.add('displayNone');
   signArea.classList.remove('displayNone');
 });
-// 註冊
+//註冊
 const url = 'https://todoo.5xcamp.us';
 const emailSignUp = document.querySelector('#emailSignUp');
 const nameSignUp = document.querySelector('#nameSignUp');
@@ -49,7 +49,7 @@ function axios_SignUp(emailSignUp, nameSignUp, axios_password) {
       },
     })
     .then(function (response) {
-      console.log(response);
+      console.log(response.data);
       emailHint2.classList.add('emailHintShow');
       passwordHint2.classList.remove('passwordHintShow');
       emailHint2.innerHTML = `<p>${response.data.message}！請點右下按鈕返回登入頁面</p>`;
@@ -70,6 +70,15 @@ const emailSignIn = document.querySelector('#emailSignIn');
 const passwordSignIn = document.querySelector('#passwordSignIn');
 const emailHint = document.querySelector('.emailHint');
 const passwordHint = document.querySelector('.passwordHint');
+function switchTabToAll() {
+  //切換到tab"全部"並印出清單功能
+  toggleStatus = 'all';
+  updateList();
+  tabLi.forEach(function (item) {
+    item.classList.remove('active');
+  });
+  tabFirstLi.classList.add('active');
+}
 function signInFunc() {
   if (emailSignIn.value != '' && passwordSignIn.value != '') {
     emailHint.classList.remove('emailHintShow');
@@ -95,8 +104,9 @@ function axios_SignIn(emailSignIn, passwordSignIn) {
     .then(function (response) {
       console.log(response);
       // axios.defaults.headers.common['Authorization'] = response.headers.authorization;
+      //axios自動帶入全域token功能(停用)
       token = response.headers.authorization;
-      passwordHint.innerHTML = `<p>123</p>`;
+      passwordHint.innerHTML = `<p>留白區域</p>`;
       emailHint.classList.add('emailHintShow');
       passwordHint.classList.remove('passwordHintShow');
       emailHint.innerHTML = `<p>${response.data.message}！3秒後自動進入TodoList系統...</p>`;
@@ -104,24 +114,24 @@ function axios_SignIn(emailSignIn, passwordSignIn) {
       switchToTodo.classList.add('btn_active');
       const userWelcomeHint = document.querySelector('.todoListArea h4 span');
       if (response.data.nickname != '') {
-        userWelcomeHint.innerHTML = `<p style="color: red;">${response.data.nickname}</p>`;
+        userWelcomeHint.innerHTML = `<p style="color: green;">${response.data.nickname}</p>`;
       } else {
-        userWelcomeHint.innerHTML = '<p style="color: green;">匿名訪客</p>';
+        userWelcomeHint.innerHTML = '<p style="color: blue;">匿名訪客</p>';
       }
+      switchTabToAll();
       setTimeout(function (e) {
-        updateList();//登入後印出清單
         signUp.classList.add('displayNone');
         todoListArea.classList.remove('displayNone');
         emailSignIn.value = '';
         passwordSignIn.value = '';
-        emailHint.innerHTML = `<p>123</p>`;
+        emailHint.innerHTML = `<p> 留白區域</p>`;
         emailHint.classList.remove('emailHintShow');
         switchToTodo.disabled = false;
         switchToTodo.classList.remove('btn_active');
       }, 3000);
     })
     .catch(function (error) {
-      emailHint.innerHTML = `<p>123</p>`;
+      emailHint.innerHTML = `<p> 留白區域</p>`;
       passwordHint.innerHTML = `<p>${error.response.data.message}！請檢查帳密或註冊帳號</p>`;
       passwordHint.classList.add('passwordHintShow');
       emailHint.classList.remove('emailHintShow');
@@ -170,7 +180,11 @@ function addTodo(inputText) {
         },
       }
     )
-    .then(() => updateList())
+    .then(() => {
+      updateList();
+      switchTabToAll();
+      inputText.value = '';
+    })
     .catch((error) => console.log(error.response));
 }
 addBtn.addEventListener('click', function (e) {
@@ -178,7 +192,6 @@ addBtn.addEventListener('click', function (e) {
     return alert('請輸入待辦事項！');
   } else {
     addTodo(inputText);
-    inputText.value = '';
   }
 });
 inputText.addEventListener('keypress', function (e) {
@@ -187,7 +200,6 @@ inputText.addEventListener('keypress', function (e) {
       return alert('請輸入待辦事項！');
     } else {
       addTodo(inputText);
-      inputText.value = '';
     }
   }
 });
@@ -265,7 +277,7 @@ function updateList() {
         workNum.textContent = todoLength.length;
       })
       .catch((error) => console.log(error.response));
-  }());//立即調用函式 IIFE
+  })(); //立即調用函式 IIFE
 }
 function getTodo() {
   axios
@@ -345,7 +357,7 @@ function getTodo_tabDone() {
       array = response.data.todos;
       array_tabWork = array.filter((item) => item.completed_at !== null);
       if (array_tabWork.length === 0) {
-        todoList.innerHTML = `<h2>目前沒有已完成事項！</h2>`;
+        todoList.innerHTML = `<img src="image/allWorking.jpg" alt="Todos were all working">`;
       } else {
         let str = '';
         let checkboxStatus = '';
@@ -368,22 +380,23 @@ function getTodo_tabDone() {
     })
     .catch((error) => console.log(error.response));
 }
-
-// //九、一鍵清除已完成清單
-// const deleteBTN = document.querySelector('#deleteBTN');
-// const tabFirstLi = document.querySelector('#tab li');
-// deleteBTN.addEventListener('click', function (e) {
-//   e.preventDefault();
-//   if (confirm('確定清除所有已完成嗎？')) {
-//     todoData = todoData.filter((item) => item.checked != 'checked');
-//     switchTabToAll();
-//   }
-// });
-// function switchTabToAll() {
-//   toggleStatus = 'all';
-//   tabLi.forEach(function (item) {
-//     item.classList.remove('active');
-//   });
-//   tabFirstLi.classList.add('active');
-//   updateList();
-// }
+//一鍵清除已完成
+const deleteBTN = document.querySelector('#deleteBTN');
+const tabFirstLi = document.querySelector('#tab li');
+deleteBTN.addEventListener('click', function (e) {
+  e.preventDefault();
+  if (confirm('確定清除所有已完成嗎？')) {
+    todoList.innerHTML = `<p style="font-size: 2rem; color: orange;">請稍候...</p>`;
+    let array_allDone = array.filter((item) => item.completed_at != null);
+    let array_allDone_Promises = array_allDone.map((item) => {
+      return axios.delete(`${url}/todos/${item.id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+    });
+    Promise.all(array_allDone_Promises) //等候API刪除全部已完成清單後一次性render
+      .then(() => switchTabToAll())
+      .catch((error) => console.log(error.response));
+  }
+});

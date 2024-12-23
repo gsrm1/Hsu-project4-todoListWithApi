@@ -121,8 +121,8 @@ input[type="text"] {
       cursor: pointer;
     }
     &.active {
-      border-bottom: 2px solid $dark;
-      color: $dark;
+      border-bottom: 2px solid red;
+      color: red;
       font-weight: bold;
     }
   }
