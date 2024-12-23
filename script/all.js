@@ -50,9 +50,9 @@ function axios_SignUp(emailSignUp, nameSignUp, axios_password) {
     })
     .then(function (response) {
       console.log(response.data);
-      emailHint2.classList.add('emailHintShow');
-      passwordHint2.classList.remove('passwordHintShow');
-      emailHint2.innerHTML = `<p>${response.data.message}！請點右下按鈕返回登入頁面</p>`;
+      passwordHint2.classList.add('passwordHintShow');
+      emailHint2.classList.remove('emailHintShow');
+      passwordHint2.innerHTML =`<p>${response.data.message}！請點右下按鈕返回登入頁面</p>`;
     })
     .catch(function (error) {
       console.log(error.response);
