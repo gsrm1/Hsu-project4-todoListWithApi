@@ -1,8 +1,55 @@
-//純切換頁面
+//一：切換登入與註冊頁面
+//二：註冊
+//三：登入
+//四：登出
+//五：新增Todo
+//六：複雜功能> 刪除、切換checked狀態、編輯
+//七：切換tab並render清單
+//八：一鍵清除已完成
+
+//DOM宣告集中區
+//一
 const switchToSignUp = document.querySelector('.switchToSignUp');
 const switchToSignIn2 = document.querySelector('.switchToSignIn2');
 const signArea = document.querySelector('.signArea');
 const signArea2 = document.querySelector('.signArea2');
+//二
+const url = 'https://todoo.5xcamp.us';
+const emailSignUp = document.querySelector('#emailSignUp');
+const nameSignUp = document.querySelector('#nameSignUp');
+const passwordSignUp = document.querySelector('#passwordSignUp');
+const passwordSignUp2 = document.querySelector('#passwordSignUp2');
+const emailHint2 = document.querySelector('.emailHint2');
+const passwordHint2 = document.querySelector('.passwordHint2');
+const switchToSignIn = document.querySelector('.switchToSignIn');
+//三
+const emailSignIn = document.querySelector('#emailSignIn');
+const passwordSignIn = document.querySelector('#passwordSignIn');
+const emailHint = document.querySelector('.emailHint');
+const passwordHint = document.querySelector('.passwordHint');
+const switchToTodo = document.querySelector('.switchToTodo');
+const signUp = document.querySelector('.signUp');
+const todoListArea = document.querySelector('.todoListArea');
+const tabFirstLi = document.querySelector('#tab li');
+let token = '';
+//四
+const switchToSignIn3 = document.querySelector('.switchToSignIn3');
+//五
+const addBtn = document.querySelector('#addBTN');
+const inputText = document.querySelector('#inputText');
+//六
+const todoList = document.querySelector('#todoList');
+//七
+const tab = document.querySelector('#tab');
+const tabLi = document.querySelectorAll('#tab li');
+let array = '';
+let array_tabWork = '';
+let todoLength = '';
+let toggleStatus = 'all';
+//八
+const deleteBTN = document.querySelector('#deleteBTN');
+
+//一：切換登入與註冊頁面
 switchToSignUp.addEventListener('click', function (e) {
   e.preventDefault();
   signArea.classList.add('displayNone');
@@ -13,32 +60,8 @@ switchToSignIn2.addEventListener('click', function (e) {
   signArea2.classList.add('displayNone');
   signArea.classList.remove('displayNone');
 });
-//註冊
-const url = 'https://todoo.5xcamp.us';
-const emailSignUp = document.querySelector('#emailSignUp');
-const nameSignUp = document.querySelector('#nameSignUp');
-const passwordSignUp = document.querySelector('#passwordSignUp');
-const passwordSignUp2 = document.querySelector('#passwordSignUp2');
-const emailHint2 = document.querySelector('.emailHint2');
-const passwordHint2 = document.querySelector('.passwordHint2');
-const switchToSignIn = document.querySelector('.switchToSignIn');
-function signUpFunc() {
-  let axios_password = '';
-  if (
-    passwordSignUp.value === passwordSignUp2.value &&
-    passwordSignUp.value != '' &&
-    passwordSignUp2.value != '' &&
-    emailSignUp.value != ''
-  ) {
-    axios_password = passwordSignUp.value;
-    axios_SignUp(emailSignUp, nameSignUp, axios_password);
-  } else {
-    passwordHint2.classList.add('passwordHintShow');
-    passwordHint2.innerHTML = `<p>請輸入帳號並檢查密碼</p>`;
-    emailHint2.classList.remove('emailHintShow');
-    return;
-  }
-}
+
+//二：註冊
 function axios_SignUp(emailSignUp, nameSignUp, axios_password) {
   axios
     .post(`${url}/users`, {
@@ -61,38 +84,29 @@ function axios_SignUp(emailSignUp, nameSignUp, axios_password) {
       passwordHint2.innerHTML = `<p>${error.response.data.error}</p>`;
     });
 }
+function signUpFunc() {
+  let axios_password = '';
+  if (
+    passwordSignUp.value === passwordSignUp2.value &&
+    passwordSignUp.value != '' &&
+    passwordSignUp2.value != '' &&
+    emailSignUp.value != ''
+  ) {
+    axios_password = passwordSignUp.value;
+    axios_SignUp(emailSignUp, nameSignUp, axios_password);
+  } else {
+    passwordHint2.classList.add('passwordHintShow');
+    passwordHint2.innerHTML = `<p>請輸入帳號並檢查密碼</p>`;
+    emailHint2.classList.remove('emailHintShow');
+    return;
+  }
+}
 switchToSignIn.addEventListener('click', function (e) {
   e.preventDefault();
   signUpFunc();
 });
-//登入
-const emailSignIn = document.querySelector('#emailSignIn');
-const passwordSignIn = document.querySelector('#passwordSignIn');
-const emailHint = document.querySelector('.emailHint');
-const passwordHint = document.querySelector('.passwordHint');
-function switchTabToAll() {
-  //切換到tab"全部"並印出清單功能
-  toggleStatus = 'all';
-  updateList();
-  tabLi.forEach(function (item) {
-    item.classList.remove('active');
-  });
-  tabFirstLi.classList.add('active');
-}
-function signInFunc() {
-  if (emailSignIn.value != '' && passwordSignIn.value != '') {
-    emailHint.classList.remove('emailHintShow');
-    axios_SignIn(emailSignIn, passwordSignIn);
-  } else {
-    passwordHint.classList.add('passwordHintShow');
-    passwordHint.innerHTML = `<p>請輸入帳號與密碼！</p>`;
-    return;
-  }
-}
-let token = '';
-const switchToTodo = document.querySelector('.switchToTodo');
-const signUp = document.querySelector('.signUp');
-const todoListArea = document.querySelector('.todoListArea');
+
+//三：登入
 function axios_SignIn(emailSignIn, passwordSignIn) {
   axios
     .post(`${url}/users/sign_in`, {
@@ -137,11 +151,30 @@ function axios_SignIn(emailSignIn, passwordSignIn) {
       emailHint.classList.remove('emailHintShow');
     });
 }
+function switchTabToAll() {
+  toggleStatus = 'all';
+  updateList();
+  tabLi.forEach(function (item) {
+    item.classList.remove('active');
+  });
+  tabFirstLi.classList.add('active');
+}
+function signInFunc() {
+  if (emailSignIn.value != '' && passwordSignIn.value != '') {
+    emailHint.classList.remove('emailHintShow');
+    axios_SignIn(emailSignIn, passwordSignIn);
+  } else {
+    passwordHint.classList.add('passwordHintShow');
+    passwordHint.innerHTML = `<p>請輸入帳號與密碼！</p>`;
+    return;
+  }
+}
 switchToTodo.addEventListener('click', function (e) {
   e.preventDefault();
   signInFunc();
 });
-//登出
+
+//四：登出
 function axios_logOut() {
   axios
     .delete(`${url}/users/sign_out`, {
@@ -152,8 +185,6 @@ function axios_logOut() {
     .then((response) => console.log(response))
     .catch((error) => console.log(error.response));
 }
-const switchToSignIn3 = document.querySelector('.switchToSignIn3');
-const inputText = document.querySelector('#inputText');
 switchToSignIn3.addEventListener('click', function (e) {
   e.preventDefault();
   openLogoutAlert();
@@ -183,8 +214,8 @@ switchToSignIn3.addEventListener('click', function (e) {
     });
   }
 });
-//新增Todo
-const addBtn = document.querySelector('#addBTN');
+
+//五：新增Todo
 function addTodo(inputText) {
   axios
     .post(
@@ -223,10 +254,32 @@ inputText.addEventListener('keypress', function (e) {
     }
   }
 });
-//刪除、切換checked狀態、編輯
-const todoList = document.querySelector('#todoList');
-const editList = document.querySelector('.editList');
-todoList.addEventListener('click', multiFunc);
+
+//六：複雜功能> 刪除、切換checked狀態、編輯
+function deleteTodo(todoId) {
+  axios
+    .delete(`${url}/todos/${todoId}`, {
+      headers: {
+        Authorization: token,
+      },
+    })
+    .then(() => updateList())
+    .catch((error) => console.log(error.response));
+}
+function updateTodo(todoId) {
+  axios
+    .patch(
+      `${url}/todos/${todoId}/toggle`,
+      {},
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    )
+    .then(() => updateList())
+    .catch((error) => console.log(error.response));
+}
 function multiFunc(e) {
   let id = e.target.closest('li').dataset.id;
   if (e.target.classList.value === 'delete') {
@@ -263,70 +316,9 @@ function multiFunc(e) {
     }
   }
 }
-function deleteTodo(todoId) {
-  axios
-    .delete(`${url}/todos/${todoId}`, {
-      headers: {
-        Authorization: token,
-      },
-    })
-    .then(() => updateList())
-    .catch((error) => console.log(error.response));
-}
-function updateTodo(todoId) {
-  axios
-    .patch(
-      `${url}/todos/${todoId}/toggle`,
-      {},
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    )
-    .then(() => updateList())
-    .catch((error) => console.log(error.response));
-}
-//切換tab並render清單
-const tab = document.querySelector('#tab');
-const tabLi = document.querySelectorAll('#tab li');
-let array = '';
-let array_tabWork = '';
-let todoLength = '';
-let toggleStatus = 'all';
-tab.addEventListener('click', changeTab);
-function changeTab(e) {
-  toggleStatus = e.target.dataset.tab;
-  tabLi.forEach(function (item) {
-    item.classList.remove('active');
-  });
-  e.target.classList.add('active');
-  updateList();
-}
-function updateList() {
-  if (toggleStatus === 'all') {
-    getTodo();
-  } else if (toggleStatus === 'work') {
-    getTodo_tabWork();
-  } else {
-    getTodo_tabDone();
-  }
-  (function getWorkNum() {
-    axios
-      .get(`${url}/todos`, {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((response) => {
-        array = response.data.todos;
-        const workNum = document.querySelector('#workNum');
-        todoLength = array.filter((item) => item.completed_at === null);
-        workNum.textContent = todoLength.length;
-      })
-      .catch((error) => console.log(error.response));
-  })(); //立即調用函式 IIFE
-}
+todoList.addEventListener('click', multiFunc);
+
+//七：切換tab並render清單
 function getTodo() {
   axios
     .get(`${url}/todos`, {
@@ -437,9 +429,41 @@ function getTodo_tabDone() {
     })
     .catch((error) => console.log(error.response));
 }
-//一鍵清除已完成
-const deleteBTN = document.querySelector('#deleteBTN');
-const tabFirstLi = document.querySelector('#tab li');
+function updateList() {
+  if (toggleStatus === 'all') {
+    getTodo();
+  } else if (toggleStatus === 'work') {
+    getTodo_tabWork();
+  } else {
+    getTodo_tabDone();
+  }
+  (function getWorkNum() {
+    axios
+      .get(`${url}/todos`, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        array = response.data.todos;
+        const workNum = document.querySelector('#workNum');
+        todoLength = array.filter((item) => item.completed_at === null);
+        workNum.textContent = todoLength.length;
+      })
+      .catch((error) => console.log(error.response));
+  })(); //立即調用函式 IIFE
+}
+function changeTab(e) {
+  toggleStatus = e.target.dataset.tab;
+  tabLi.forEach(function (item) {
+    item.classList.remove('active');
+  });
+  e.target.classList.add('active');
+  updateList();
+}
+tab.addEventListener('click', changeTab);
+
+//八：一鍵清除已完成
 deleteBTN.addEventListener('click', function (e) {
   e.preventDefault();
   openDeleteAllAlert();
