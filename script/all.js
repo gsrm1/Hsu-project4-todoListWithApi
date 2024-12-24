@@ -178,9 +178,7 @@ switchToSignIn3.addEventListener('click', function (e) {
         signUp.classList.remove('displayNone');
         inputText.value = '';
       } else if (result.dismiss === 'backdrop') {
-       
       } else if (!result.isConfirmed) {
-       
       }
     });
   }
