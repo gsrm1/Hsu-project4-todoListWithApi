@@ -156,11 +156,41 @@ const switchToSignIn3 = document.querySelector('.switchToSignIn3');
 const inputText = document.querySelector('#inputText');
 switchToSignIn3.addEventListener('click', function (e) {
   e.preventDefault();
-  if (confirm('確認登出系統嗎？(資料會短暫留存在本帳號)')) {
-    axios_logOut();
-    todoListArea.classList.add('displayNone');
-    signUp.classList.remove('displayNone');
-    inputText.value = '';
+  openLogoutAlert();
+  function openLogoutAlert(e) {
+    Swal.fire({
+      title: '確認登出系統嗎？',
+      text: '說明：資料會短暫留存在帳號',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '是，我要登出',
+      cancelButtonText: '不登出',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: '已登出!',
+          text: '歡迎再次登入使用本系統',
+          icon: 'success',
+        });
+        todoListArea.classList.add('displayNone');
+        signUp.classList.remove('displayNone');
+        inputText.value = '';
+      } else if (result.dismiss === 'backdrop') {
+        Swal.fire({
+          title: '取消登出',
+          text: '返回Todo-List系統',
+          icon: 'success',
+        });
+      } else if (!result.isConfirmed) {
+        Swal.fire({
+          title: '取消登出',
+          text: '返回Todo-List系統',
+          icon: 'success',
+        });
+      }
+    });
   }
 });
 //新增Todo
@@ -189,7 +219,7 @@ function addTodo(inputText) {
 }
 addBtn.addEventListener('click', function (e) {
   if (inputText.value.trim() === '') {
-    return alert('請輸入待辦事項！');
+    return Swal.fire('請輸入待辦事項！');
   } else {
     addTodo(inputText);
   }
@@ -197,7 +227,7 @@ addBtn.addEventListener('click', function (e) {
 inputText.addEventListener('keypress', function (e) {
   if (e.key === 'Enter') {
     if (inputText.value.trim() === '') {
-      return alert('請輸入待辦事項！');
+      return Swal.fire('請輸入待辦事項！');
     } else {
       addTodo(inputText);
     }
@@ -422,18 +452,34 @@ const deleteBTN = document.querySelector('#deleteBTN');
 const tabFirstLi = document.querySelector('#tab li');
 deleteBTN.addEventListener('click', function (e) {
   e.preventDefault();
-  if (confirm('確定清除所有已完成嗎？')) {
-    todoList.innerHTML = `<p style="font-size: 2rem; color: orange;">請稍候...</p>`;
-    let array_allDone = array.filter((item) => item.completed_at != null);
-    let array_allDone_Promises = array_allDone.map((item) => {
-      return axios.delete(`${url}/todos/${item.id}`, {
-        headers: {
-          Authorization: token,
-        },
-      });
+  openDeleteAllAlert();
+  function openDeleteAllAlert(e) {
+    Swal.fire({
+      title: '確定清除所有已完成嗎？',
+      text: '說明：清除後會返回到"全部"頁籤',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '是的，請清除',
+      cancelButtonText: '取消清除',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        todoList.innerHTML = `<p style="font-size: 2rem; color: orange;">請稍候...</p>`;
+        let array_allDone = array.filter((item) => item.completed_at != null);
+        let array_allDone_Promises = array_allDone.map((item) => {
+          return axios.delete(`${url}/todos/${item.id}`, {
+            headers: {
+              Authorization: token,
+            },
+          });
+        });
+        Promise.all(array_allDone_Promises) //等候API刪除全部已完成清單後一次性render
+          .then(() => switchTabToAll())
+          .catch((error) => console.log(error.response));
+      } else if (result.dismiss === 'backdrop') {
+      } else if (!result.isConfirmed) {
+      }
     });
-    Promise.all(array_allDone_Promises) //等候API刪除全部已完成清單後一次性render
-      .then(() => switchTabToAll())
-      .catch((error) => console.log(error.response));
   }
 });
