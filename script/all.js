@@ -178,17 +178,9 @@ switchToSignIn3.addEventListener('click', function (e) {
         signUp.classList.remove('displayNone');
         inputText.value = '';
       } else if (result.dismiss === 'backdrop') {
-        Swal.fire({
-          title: '取消登出',
-          text: '返回Todo-List系統',
-          icon: 'success',
-        });
+       
       } else if (!result.isConfirmed) {
-        Swal.fire({
-          title: '取消登出',
-          text: '返回Todo-List系統',
-          icon: 'success',
-        });
+       
       }
     });
   }
