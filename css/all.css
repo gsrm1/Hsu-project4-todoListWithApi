@@ -54,7 +54,9 @@ table {
   border-spacing: 0;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -110,7 +112,9 @@ h1 span {
   display: flex;
   justify-content: space-between;
 }
-.userInfo h4, .userInfo p, .userInfo span {
+.userInfo h4,
+.userInfo p,
+.userInfo span {
   display: inline-block;
 }
 .userInfo a {
@@ -176,13 +180,30 @@ input[type=text]::placeholder {
   cursor: pointer;
 }
 #tab li.active {
-  border-bottom: 2px solid red;
-  color: red;
+  border-bottom: 2px solid #333;
+  color: #333;
   font-weight: bold;
 }
 
 .cart_content {
   padding: 0.5rem 1rem 1rem 1rem;
+}
+.cart_content .editArea {
+  display: none;
+}
+.cart_content .displayShow {
+  display: block;
+}
+.cart_content .editList {
+  width: 80%;
+  border: 3px solid red;
+}
+.cart_content .editList input {
+  width: 100%;
+  height: 30px;
+}
+.cart_content .displayNone {
+  display: none;
 }
 @media (max-width: 575px) {
   .cart_content {
@@ -192,7 +213,6 @@ input[type=text]::placeholder {
 
 #todoList li {
   position: relative;
-  padding-right: 2rem;
 }
 #todoList li:hover {
   cursor: pointer;
@@ -344,6 +364,7 @@ img {
 
 .referenceNote {
   font-size: 0.8rem;
+  text-align: center;
 }
 
 .signUp {

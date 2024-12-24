@@ -52,7 +52,7 @@ function axios_SignUp(emailSignUp, nameSignUp, axios_password) {
       console.log(response.data);
       passwordHint2.classList.add('passwordHintShow');
       emailHint2.classList.remove('emailHintShow');
-      passwordHint2.innerHTML =`<p>${response.data.message}！請點右下按鈕返回登入頁面</p>`;
+      passwordHint2.innerHTML = `<p>${response.data.message}！請點右下按鈕返回登入頁面</p>`;
     })
     .catch(function (error) {
       console.log(error.response);
@@ -203,8 +203,9 @@ inputText.addEventListener('keypress', function (e) {
     }
   }
 });
-//刪除、切換checked狀態、編輯（待完成）
+//刪除、切換checked狀態、編輯
 const todoList = document.querySelector('#todoList');
+const editList = document.querySelector('.editList');
 todoList.addEventListener('click', multiFunc);
 function multiFunc(e) {
   let id = e.target.closest('li').dataset.id;
@@ -213,8 +214,41 @@ function multiFunc(e) {
     deleteTodo(`${id}`);
   } else if (e.target.classList.value === 'checkpoint') {
     updateTodo(`${id}`);
+  } else if (e.target.classList.value === 'edit') {
+    e.preventDefault();
+    let editArea = e.target.previousElementSibling;
+    if (editArea.classList.contains('displayShow')) {
+      let editID = e.target.closest('li').dataset.id;
+      let editInput = e.target.previousElementSibling.firstChild.children[0].children[0];
+      console.log(editInput);
+      axios
+        .put(
+          `${url}/todos/${editID}`,
+          {
+            todo: {
+              content: editInput.value,
+            },
+          },
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        )
+        .then((response) => {
+          console.log(response);
+          updateList()
+        })
+        .catch((error) => console.log(error.response));
+        editArea.classList.remove('displayShow');
+    } else {
+      editArea.classList.add('displayShow');
+    }
   }
 }
+
+
+
 function deleteTodo(todoId) {
   axios
     .delete(`${url}/todos/${todoId}`, {
@@ -278,6 +312,7 @@ function updateList() {
       })
       .catch((error) => console.log(error.response));
   })(); //立即調用函式 IIFE
+  console.log(array);
 }
 function getTodo() {
   axios
@@ -303,6 +338,9 @@ function getTodo() {
         <input type="checkbox" class="checkpoint" ${checkboxStatus}/>
         <span>${item.content}</span>
         </label>
+        <div class="editArea"><ul class="editList">
+          <li><input class="editInput" type="text" placeholder="輸入修改內容後再點編輯"></li>
+        </ul></div>
         <a href="#" class="edit">編輯</a>
         <a href="#" class="delete"></a>
         </li>`;
@@ -337,6 +375,9 @@ function getTodo_tabWork() {
         <input type="checkbox" class="checkpoint" ${checkboxStatus}/>
         <span>${item.content}</span>
         </label>
+        <div class="editArea"><ul class="editList">
+          <li><input class="editInput" type="text" placeholder="輸入修改內容後再點編輯"></li>
+        </ul></div>
         <a href="#" class="edit">編輯</a>
         <a href="#" class="delete"></a>
         </li>`;
@@ -371,6 +412,9 @@ function getTodo_tabDone() {
         <input type="checkbox" class="checkpoint" ${checkboxStatus}/>
         <span>${item.content}</span>
         </label>
+        <div class="editArea"><ul class="editList">
+          <li><input class="editInput" type="text" placeholder="輸入修改內容後再點編輯"></li>
+        </ul></div>
         <a href="#" class="edit">編輯</a>
         <a href="#" class="delete"></a>
         </li>`;
