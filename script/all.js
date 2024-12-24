@@ -219,8 +219,8 @@ function multiFunc(e) {
     let editArea = e.target.previousElementSibling;
     if (editArea.classList.contains('displayShow')) {
       let editID = e.target.closest('li').dataset.id;
-      let editInput = e.target.previousElementSibling.firstChild.children[0].children[0];
-      console.log(editInput);
+      let editInput =
+        e.target.previousElementSibling.firstChild.children[0].children[0];
       axios
         .put(
           `${url}/todos/${editID}`,
@@ -235,20 +235,14 @@ function multiFunc(e) {
             },
           }
         )
-        .then((response) => {
-          console.log(response);
-          updateList()
-        })
+        .then(() => updateList())
         .catch((error) => console.log(error.response));
-        editArea.classList.remove('displayShow');
+      editArea.classList.remove('displayShow');
     } else {
       editArea.classList.add('displayShow');
     }
   }
 }
-
-
-
 function deleteTodo(todoId) {
   axios
     .delete(`${url}/todos/${todoId}`, {
@@ -312,7 +306,6 @@ function updateList() {
       })
       .catch((error) => console.log(error.response));
   })(); //立即調用函式 IIFE
-  console.log(array);
 }
 function getTodo() {
   axios
