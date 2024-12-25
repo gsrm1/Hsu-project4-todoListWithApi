@@ -54,15 +54,15 @@ const deleteBTN = document.querySelector('#deleteBTN');
 function reloadWindow() {
   localToken = localStorage.getItem('localToken');
   localNickname = localStorage.getItem('localNickname');
-  if (localToken == null) {
-    todoListArea.classList.add('displayNone');
-    signUp.classList.remove('displayNone');
-    inputText.value = '';
-  } else {
+  if (localToken != null) {
     getTodo();
     signUp.classList.add('displayNone');
     todoListArea.classList.remove('displayNone');
     userWelcomeHint.innerHTML = `<p style="color: green;">${localNickname}</p>`;
+  } else {
+    todoListArea.classList.add('displayNone');
+    signUp.classList.remove('displayNone');
+    inputText.value = '';
   }
 }
 reloadWindow();
