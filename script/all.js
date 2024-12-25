@@ -2,7 +2,7 @@
 //一：切換登入與註冊頁面
 //二：註冊
 //三：登入
-//四：登出
+//四：登出（同步清除localStorage）
 //五：新增Todo
 //六：複雜功能> 刪除、切換checked狀態、編輯
 //七：切換tab並render清單
@@ -194,7 +194,7 @@ switchToTodo.addEventListener('click', function (e) {
   signInFunc();
 });
 
-//四：登出
+//四：登出（同步清除localStorage）
 function axios_logOut() {
   axios
     .delete(`${url}/users/sign_out`, {
