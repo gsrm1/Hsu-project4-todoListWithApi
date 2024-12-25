@@ -1,3 +1,4 @@
+//常駐功能：更新瀏覽器後維持登入狀態
 //一：切換登入與註冊頁面
 //二：註冊
 //三：登入
@@ -31,7 +32,7 @@ const switchToTodo = document.querySelector('.switchToTodo');
 const signUp = document.querySelector('.signUp');
 const todoListArea = document.querySelector('.todoListArea');
 const tabFirstLi = document.querySelector('#tab li');
-let token = '';
+const userWelcomeHint = document.querySelector('.todoListArea h4 span');
 //四
 const switchToSignIn3 = document.querySelector('.switchToSignIn3');
 //五
@@ -48,6 +49,23 @@ let todoLength = '';
 let toggleStatus = 'all';
 //八
 const deleteBTN = document.querySelector('#deleteBTN');
+
+//常駐功能：更新瀏覽器後維持登入狀態
+function reloadWindow() {
+  localToken = localStorage.getItem('localToken');
+  localNickname = localStorage.getItem('localNickname');
+  if (localToken == null) {
+    todoListArea.classList.add('displayNone');
+    signUp.classList.remove('displayNone');
+    inputText.value = '';
+  } else {
+    getTodo();
+    signUp.classList.add('displayNone');
+    todoListArea.classList.remove('displayNone');
+    userWelcomeHint.innerHTML = `<p style="color: green;">${localNickname}</p>`;
+  }
+}
+reloadWindow();
 
 //一：切換登入與註冊頁面
 switchToSignUp.addEventListener('click', function (e) {
@@ -119,14 +137,16 @@ function axios_SignIn(emailSignIn, passwordSignIn) {
       console.log(response);
       // axios.defaults.headers.common['Authorization'] = response.headers.authorization;
       //axios自動帶入全域token功能(停用)
-      token = response.headers.authorization;
+      let token_localStorage = response.headers.authorization;
+      let nickname_localStorage = response.data.nickname;
+      localStorage.setItem('localToken', token_localStorage);
+      localStorage.setItem('localNickname', nickname_localStorage);
       passwordHint.innerHTML = `<p>留白區域</p>`;
       emailHint.classList.add('emailHintShow');
       passwordHint.classList.remove('passwordHintShow');
       emailHint.innerHTML = `<p>${response.data.message}！3秒後自動進入TodoList系統...</p>`;
       switchToTodo.disabled = true;
       switchToTodo.classList.add('btn_active');
-      const userWelcomeHint = document.querySelector('.todoListArea h4 span');
       if (response.data.nickname != '') {
         userWelcomeHint.innerHTML = `<p style="color: green;">${response.data.nickname}</p>`;
       } else {
@@ -179,16 +199,20 @@ function axios_logOut() {
   axios
     .delete(`${url}/users/sign_out`, {
       headers: {
-        Authorization: token,
+        Authorization: localStorage.getItem('localToken'),
       },
     })
-    .then((response) => console.log(response))
+    .then((response) => {
+      console.log(response);
+      localStorage.clear();
+      reloadWindow();
+    })
     .catch((error) => console.log(error.response));
 }
 switchToSignIn3.addEventListener('click', function (e) {
   e.preventDefault();
   openLogoutAlert();
-  function openLogoutAlert(e) {
+  function openLogoutAlert() {
     Swal.fire({
       title: '確認登出系統嗎？',
       text: '說明：資料會短暫留存在帳號',
@@ -206,10 +230,6 @@ switchToSignIn3.addEventListener('click', function (e) {
           icon: 'success',
         });
         axios_logOut();
-        token = '';
-        todoListArea.classList.add('displayNone');
-        signUp.classList.remove('displayNone');
-        inputText.value = '';
       } else if (result.dismiss === 'backdrop') {
       } else if (!result.isConfirmed) {
       }
@@ -229,7 +249,7 @@ function addTodo(inputText) {
       },
       {
         headers: {
-          Authorization: token,
+          Authorization: localStorage.getItem('localToken'),
         },
       }
     )
@@ -262,7 +282,7 @@ function deleteTodo(todoId) {
   axios
     .delete(`${url}/todos/${todoId}`, {
       headers: {
-        Authorization: token,
+        Authorization: localStorage.getItem('localToken'),
       },
     })
     .then(() => updateList())
@@ -275,7 +295,7 @@ function updateTodo(todoId) {
       {},
       {
         headers: {
-          Authorization: token,
+          Authorization: localStorage.getItem('localToken'),
         },
       }
     )
@@ -306,7 +326,7 @@ function multiFunc(e) {
           },
           {
             headers: {
-              Authorization: token,
+              Authorization: localStorage.getItem('localToken'),
             },
           }
         )
@@ -325,7 +345,7 @@ function getTodo() {
   axios
     .get(`${url}/todos`, {
       headers: {
-        Authorization: token,
+        Authorization: localStorage.getItem('localToken'),
       },
     })
     .then((response) => {
@@ -361,7 +381,7 @@ function getTodo_tabWork() {
   axios
     .get(`${url}/todos`, {
       headers: {
-        Authorization: token,
+        Authorization: localStorage.getItem('localToken'),
       },
     })
     .then((response) => {
@@ -398,7 +418,7 @@ function getTodo_tabDone() {
   axios
     .get(`${url}/todos`, {
       headers: {
-        Authorization: token,
+        Authorization: localStorage.getItem('localToken'),
       },
     })
     .then((response) => {
@@ -443,7 +463,7 @@ function updateList() {
     axios
       .get(`${url}/todos`, {
         headers: {
-          Authorization: token,
+          Authorization: localStorage.getItem('localToken'),
         },
       })
       .then((response) => {
@@ -486,7 +506,7 @@ deleteBTN.addEventListener('click', function (e) {
         let array_allDone_Promises = array_allDone.map((item) => {
           return axios.delete(`${url}/todos/${item.id}`, {
             headers: {
-              Authorization: token,
+              Authorization: localStorage.getItem('localToken'),
             },
           });
         });
