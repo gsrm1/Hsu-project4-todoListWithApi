@@ -205,6 +205,8 @@ switchToSignIn3.addEventListener('click', function (e) {
           text: '歡迎再次登入使用本系統',
           icon: 'success',
         });
+        axios_logOut();
+        token = '';
         todoListArea.classList.add('displayNone');
         signUp.classList.remove('displayNone');
         inputText.value = '';
