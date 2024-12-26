@@ -341,6 +341,29 @@ function multiFunc(e) {
 todoList.addEventListener('click', multiFunc);
 
 //七：切換tab並render清單
+function renderFunc(arr) {
+  let str = '';
+  let checkboxStatus = '';
+  arr.forEach(function (item) {
+    if (item.completed_at === null) {
+      checkboxStatus = '';
+    } else {
+      checkboxStatus = 'checked';
+    }
+    str += `<li data-id="${item.id}"> <label class="checkbox">
+  <input type="checkbox" class="checkpoint" ${checkboxStatus}/>
+  <span>${item.content}</span>
+  </label>
+  <div class="editArea"><ul class="editList">
+    <li><input class="editInput" type="text" placeholder="輸入修改內容後再點編輯"></li>
+  </ul></div>
+  <a href="#" class="edit">編輯</a>
+  <a href="#" class="delete"></a>
+  </li>`;
+  });
+  todoList.innerHTML = str;
+}
+
 function getTodo() {
   axios
     .get(`${url}/todos`, {
@@ -353,26 +376,7 @@ function getTodo() {
       if (array.length === 0) {
         todoList.innerHTML = `<img src="image/noTodo.jpg" alt="No todos to display">`;
       } else {
-        let str = '';
-        let checkboxStatus = '';
-        array.forEach(function (item) {
-          if (item.completed_at === null) {
-            checkboxStatus = '';
-          } else {
-            checkboxStatus = 'checked';
-          }
-          str += `<li data-id="${item.id}"> <label class="checkbox">
-        <input type="checkbox" class="checkpoint" ${checkboxStatus}/>
-        <span>${item.content}</span>
-        </label>
-        <div class="editArea"><ul class="editList">
-          <li><input class="editInput" type="text" placeholder="輸入修改內容後再點編輯"></li>
-        </ul></div>
-        <a href="#" class="edit">編輯</a>
-        <a href="#" class="delete"></a>
-        </li>`;
-        });
-        todoList.innerHTML = str;
+        renderFunc(array);
       }
     })
     .catch((error) => console.log(error.response));
@@ -390,26 +394,7 @@ function getTodo_tabWork() {
       if (array_tabWork.length === 0) {
         todoList.innerHTML = `<img src="image/allDone.jpg" alt="Todos were all done">`;
       } else {
-        let str = '';
-        let checkboxStatus = '';
-        array_tabWork.forEach(function (item) {
-          if (item.completed_at === null) {
-            checkboxStatus = '';
-          } else {
-            checkboxStatus = 'checked';
-          }
-          str += `<li data-id="${item.id}"> <label class="checkbox">
-        <input type="checkbox" class="checkpoint" ${checkboxStatus}/>
-        <span>${item.content}</span>
-        </label>
-        <div class="editArea"><ul class="editList">
-          <li><input class="editInput" type="text" placeholder="輸入修改內容後再點編輯"></li>
-        </ul></div>
-        <a href="#" class="edit">編輯</a>
-        <a href="#" class="delete"></a>
-        </li>`;
-        });
-        todoList.innerHTML = str;
+        renderFunc(array_tabWork);
       }
     })
     .catch((error) => console.log(error.response));
@@ -427,26 +412,7 @@ function getTodo_tabDone() {
       if (array_tabWork.length === 0) {
         todoList.innerHTML = `<img src="image/allWorking.jpg" alt="Todos were all working">`;
       } else {
-        let str = '';
-        let checkboxStatus = '';
-        array_tabWork.forEach(function (item) {
-          if (item.completed_at === null) {
-            checkboxStatus = '';
-          } else {
-            checkboxStatus = 'checked';
-          }
-          str += `<li data-id="${item.id}"> <label class="checkbox">
-        <input type="checkbox" class="checkpoint" ${checkboxStatus}/>
-        <span>${item.content}</span>
-        </label>
-        <div class="editArea"><ul class="editList">
-          <li><input class="editInput" type="text" placeholder="輸入修改內容後再點編輯"></li>
-        </ul></div>
-        <a href="#" class="edit">編輯</a>
-        <a href="#" class="delete"></a>
-        </li>`;
-        });
-        todoList.innerHTML = str;
+        renderFunc(array_tabWork);
       }
     })
     .catch((error) => console.log(error.response));
