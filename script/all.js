@@ -51,6 +51,8 @@ let toggleStatus = 'all';
 const deleteBTN = document.querySelector('#deleteBTN');
 
 //常駐功能：更新瀏覽器後維持登入狀態
+reloadWindow();
+
 function reloadWindow() {
   localToken = localStorage.getItem('localToken');
   localNickname = localStorage.getItem('localNickname');
@@ -65,7 +67,6 @@ function reloadWindow() {
     inputText.value = '';
   }
 }
-reloadWindow();
 
 //一：切換登入與註冊頁面
 switchToSignUp.addEventListener('click', function (e) {
@@ -80,6 +81,29 @@ switchToSignIn2.addEventListener('click', function (e) {
 });
 
 //二：註冊
+switchToSignIn.addEventListener('click', function (e) {
+  e.preventDefault();
+  signUpFunc();
+});
+
+function signUpFunc() {
+  let axios_password = '';
+  if (
+    passwordSignUp.value === passwordSignUp2.value &&
+    passwordSignUp.value != '' &&
+    passwordSignUp2.value != '' &&
+    emailSignUp.value != ''
+  ) {
+    axios_password = passwordSignUp.value;
+    axios_SignUp(emailSignUp, nameSignUp, axios_password);
+  } else {
+    passwordHint2.classList.add('passwordHintShow');
+    passwordHint2.innerHTML = `<p>請輸入帳號並檢查密碼</p>`;
+    emailHint2.classList.remove('emailHintShow');
+    return;
+  }
+}
+
 function axios_SignUp(emailSignUp, nameSignUp, axios_password) {
   axios
     .post(`${url}/users`, {
@@ -102,29 +126,24 @@ function axios_SignUp(emailSignUp, nameSignUp, axios_password) {
       passwordHint2.innerHTML = `<p>${error.response.data.error}</p>`;
     });
 }
-function signUpFunc() {
-  let axios_password = '';
-  if (
-    passwordSignUp.value === passwordSignUp2.value &&
-    passwordSignUp.value != '' &&
-    passwordSignUp2.value != '' &&
-    emailSignUp.value != ''
-  ) {
-    axios_password = passwordSignUp.value;
-    axios_SignUp(emailSignUp, nameSignUp, axios_password);
+
+//三：登入
+switchToTodo.addEventListener('click', function (e) {
+  e.preventDefault();
+  signInFunc();
+});
+
+function signInFunc() {
+  if (emailSignIn.value != '' && passwordSignIn.value != '') {
+    emailHint.classList.remove('emailHintShow');
+    axios_SignIn(emailSignIn, passwordSignIn);
   } else {
-    passwordHint2.classList.add('passwordHintShow');
-    passwordHint2.innerHTML = `<p>請輸入帳號並檢查密碼</p>`;
-    emailHint2.classList.remove('emailHintShow');
+    passwordHint.classList.add('passwordHintShow');
+    passwordHint.innerHTML = `<p>請輸入帳號與密碼！</p>`;
     return;
   }
 }
-switchToSignIn.addEventListener('click', function (e) {
-  e.preventDefault();
-  signUpFunc();
-});
 
-//三：登入
 function axios_SignIn(emailSignIn, passwordSignIn) {
   axios
     .post(`${url}/users/sign_in`, {
@@ -171,6 +190,7 @@ function axios_SignIn(emailSignIn, passwordSignIn) {
       emailHint.classList.remove('emailHintShow');
     });
 }
+
 function switchTabToAll() {
   toggleStatus = 'all';
   updateList();
@@ -179,22 +199,37 @@ function switchTabToAll() {
   });
   tabFirstLi.classList.add('active');
 }
-function signInFunc() {
-  if (emailSignIn.value != '' && passwordSignIn.value != '') {
-    emailHint.classList.remove('emailHintShow');
-    axios_SignIn(emailSignIn, passwordSignIn);
-  } else {
-    passwordHint.classList.add('passwordHintShow');
-    passwordHint.innerHTML = `<p>請輸入帳號與密碼！</p>`;
-    return;
-  }
-}
-switchToTodo.addEventListener('click', function (e) {
-  e.preventDefault();
-  signInFunc();
-});
 
 //四：登出（同步清除localStorage）
+switchToSignIn3.addEventListener('click', function (e) {
+  e.preventDefault();
+  openLogoutAlert();
+});
+
+function openLogoutAlert() {
+  Swal.fire({
+    title: '確認登出系統嗎？',
+    text: '說明：資料會短暫留存在帳號',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '是，我要登出',
+    cancelButtonText: '不登出',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: '已登出!',
+        text: '歡迎再次登入使用本系統',
+        icon: 'success',
+      });
+      axios_logOut();
+    } else if (result.dismiss === 'backdrop') {
+    } else if (!result.isConfirmed) {
+    }
+  });
+}
+
 function axios_logOut() {
   axios
     .delete(`${url}/users/sign_out`, {
@@ -207,37 +242,32 @@ function axios_logOut() {
       localStorage.clear();
       reloadWindow();
     })
-    .catch((error) => console.log(error.response));
-}
-switchToSignIn3.addEventListener('click', function (e) {
-  e.preventDefault();
-  openLogoutAlert();
-  function openLogoutAlert() {
-    Swal.fire({
-      title: '確認登出系統嗎？',
-      text: '說明：資料會短暫留存在帳號',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: '是，我要登出',
-      cancelButtonText: '不登出',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: '已登出!',
-          text: '歡迎再次登入使用本系統',
-          icon: 'success',
-        });
-        axios_logOut();
-      } else if (result.dismiss === 'backdrop') {
-      } else if (!result.isConfirmed) {
-      }
+    .catch((error) => {
+      console.log(error.response)
+      localStorage.clear();
+      reloadWindow();
     });
+}
+
+//五：新增Todo
+addBtn.addEventListener('click', function (e) {
+  if (inputText.value.trim() === '') {
+    return Swal.fire('請輸入待辦事項！');
+  } else {
+    addTodo(inputText);
   }
 });
 
-//五：新增Todo
+inputText.addEventListener('keypress', function (e) {
+  if (e.key === 'Enter') {
+    if (inputText.value.trim() === '') {
+      return Swal.fire('請輸入待辦事項！');
+    } else {
+      addTodo(inputText);
+    }
+  }
+});
+
 function addTodo(inputText) {
   axios
     .post(
@@ -260,48 +290,10 @@ function addTodo(inputText) {
     })
     .catch((error) => console.log(error.response));
 }
-addBtn.addEventListener('click', function (e) {
-  if (inputText.value.trim() === '') {
-    return Swal.fire('請輸入待辦事項！');
-  } else {
-    addTodo(inputText);
-  }
-});
-inputText.addEventListener('keypress', function (e) {
-  if (e.key === 'Enter') {
-    if (inputText.value.trim() === '') {
-      return Swal.fire('請輸入待辦事項！');
-    } else {
-      addTodo(inputText);
-    }
-  }
-});
 
 //六：複雜功能> 刪除、切換checked狀態、編輯
-function deleteTodo(todoId) {
-  axios
-    .delete(`${url}/todos/${todoId}`, {
-      headers: {
-        Authorization: localStorage.getItem('localToken'),
-      },
-    })
-    .then(() => updateList())
-    .catch((error) => console.log(error.response));
-}
-function updateTodo(todoId) {
-  axios
-    .patch(
-      `${url}/todos/${todoId}/toggle`,
-      {},
-      {
-        headers: {
-          Authorization: localStorage.getItem('localToken'),
-        },
-      }
-    )
-    .then(() => updateList())
-    .catch((error) => console.log(error.response));
-}
+todoList.addEventListener('click', multiFunc);
+
 function multiFunc(e) {
   let id = e.target.closest('li').dataset.id;
   if (e.target.classList.value === 'delete') {
@@ -338,30 +330,68 @@ function multiFunc(e) {
     }
   }
 }
-todoList.addEventListener('click', multiFunc);
+
+function deleteTodo(todoId) {
+  axios
+    .delete(`${url}/todos/${todoId}`, {
+      headers: {
+        Authorization: localStorage.getItem('localToken'),
+      },
+    })
+    .then(() => updateList())
+    .catch((error) => console.log(error.response));
+}
+
+function updateTodo(todoId) {
+  axios
+    .patch(
+      `${url}/todos/${todoId}/toggle`,
+      {},
+      {
+        headers: {
+          Authorization: localStorage.getItem('localToken'),
+        },
+      }
+    )
+    .then(() => updateList())
+    .catch((error) => console.log(error.response));
+}
 
 //七：切換tab並render清單
-function renderFunc(arr) {
-  let str = '';
-  let checkboxStatus = '';
-  arr.forEach(function (item) {
-    if (item.completed_at === null) {
-      checkboxStatus = '';
-    } else {
-      checkboxStatus = 'checked';
-    }
-    str += `<li data-id="${item.id}"> <label class="checkbox">
-  <input type="checkbox" class="checkpoint" ${checkboxStatus}/>
-  <span>${item.content}</span>
-  </label>
-  <div class="editArea"><ul class="editList">
-    <li><input class="editInput" type="text" placeholder="輸入修改內容後再點編輯"></li>
-  </ul></div>
-  <a href="#" class="edit">編輯</a>
-  <a href="#" class="delete"></a>
-  </li>`;
+tab.addEventListener('click', changeTab);
+
+function changeTab(e) {
+  toggleStatus = e.target.dataset.tab;
+  tabLi.forEach(function (item) {
+    item.classList.remove('active');
   });
-  todoList.innerHTML = str;
+  e.target.classList.add('active');
+  updateList();
+}
+
+function updateList() {
+  if (toggleStatus === 'all') {
+    getTodo();
+  } else if (toggleStatus === 'work') {
+    getTodo_tabWork();
+  } else {
+    getTodo_tabDone();
+  }
+  (function getWorkNum() {
+    axios
+      .get(`${url}/todos`, {
+        headers: {
+          Authorization: localStorage.getItem('localToken'),
+        },
+      })
+      .then((response) => {
+        array = response.data.todos;
+        const workNum = document.querySelector('#workNum');
+        todoLength = array.filter((item) => item.completed_at === null);
+        workNum.textContent = todoLength.length;
+      })
+      .catch((error) => console.log(error.response));
+  })(); //立即調用函式 IIFE
 }
 
 function getTodo() {
@@ -406,6 +436,7 @@ function getTodo_tabDone() {
         Authorization: localStorage.getItem('localToken'),
       },
     })
+
     .then((response) => {
       array = response.data.todos;
       array_tabWork = array.filter((item) => item.completed_at !== null);
@@ -417,71 +448,62 @@ function getTodo_tabDone() {
     })
     .catch((error) => console.log(error.response));
 }
-function updateList() {
-  if (toggleStatus === 'all') {
-    getTodo();
-  } else if (toggleStatus === 'work') {
-    getTodo_tabWork();
-  } else {
-    getTodo_tabDone();
-  }
-  (function getWorkNum() {
-    axios
-      .get(`${url}/todos`, {
-        headers: {
-          Authorization: localStorage.getItem('localToken'),
-        },
-      })
-      .then((response) => {
-        array = response.data.todos;
-        const workNum = document.querySelector('#workNum');
-        todoLength = array.filter((item) => item.completed_at === null);
-        workNum.textContent = todoLength.length;
-      })
-      .catch((error) => console.log(error.response));
-  })(); //立即調用函式 IIFE
-}
-function changeTab(e) {
-  toggleStatus = e.target.dataset.tab;
-  tabLi.forEach(function (item) {
-    item.classList.remove('active');
+
+function renderFunc(arr) {
+  let str = '';
+  let checkboxStatus = '';
+  arr.forEach(function (item) {
+    if (item.completed_at === null) {
+      checkboxStatus = '';
+    } else {
+      checkboxStatus = 'checked';
+    }
+    str += `<li data-id="${item.id}"> <label class="checkbox">
+  <input type="checkbox" class="checkpoint" ${checkboxStatus}/>
+  <span>${item.content}</span>
+  </label>
+  <div class="editArea"><ul class="editList">
+    <li><input class="editInput" type="text" placeholder="輸入修改內容後再點編輯"></li>
+  </ul></div>
+  <a href="#" class="edit">編輯</a>
+  <a href="#" class="delete"></a>
+  </li>`;
   });
-  e.target.classList.add('active');
-  updateList();
+  todoList.innerHTML = str;
 }
-tab.addEventListener('click', changeTab);
 
 //八：一鍵清除已完成
 deleteBTN.addEventListener('click', function (e) {
   e.preventDefault();
   openDeleteAllAlert();
-  function openDeleteAllAlert(e) {
-    Swal.fire({
-      title: '確定清除所有已完成嗎？',
-      text: '說明：清除後會返回到"全部"頁籤',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: '是的，請清除',
-      cancelButtonText: '取消清除',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        todoList.innerHTML = `<p style="font-size: 2rem; color: orange;">請稍候...</p>`;
-        let array_allDone = array.filter((item) => item.completed_at != null);
-        let array_allDone_Promises = array_allDone.map((item) => {
-          return axios.delete(`${url}/todos/${item.id}`, {
-            headers: {
-              Authorization: localStorage.getItem('localToken'),
-            },
-          });
-        });
-        Promise.all(array_allDone_Promises) //等候API刪除全部已完成清單後一次性render
-          .then(() => switchTabToAll())
-          .catch((error) => console.log(error.response));
-      } else if (result.dismiss === 'backdrop') {
-      } else if (!result.isConfirmed) {
-      }
-    });
-  }
 });
+
+function openDeleteAllAlert(e) {
+  Swal.fire({
+    title: '確定清除所有已完成嗎？',
+    text: '說明：清除後會返回到"全部"頁籤',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '是的，請清除',
+    cancelButtonText: '取消清除',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      todoList.innerHTML = `<p style="font-size: 2rem; color: orange;">請稍候...</p>`;
+      let array_allDone = array.filter((item) => item.completed_at != null);
+      let array_allDone_Promises = array_allDone.map((item) => {
+        return axios.delete(`${url}/todos/${item.id}`, {
+          headers: {
+            Authorization: localStorage.getItem('localToken'),
+          },
+        });
+      });
+      Promise.all(array_allDone_Promises) //等候API刪除全部已完成清單後一次性render
+        .then(() => switchTabToAll())
+        .catch((error) => console.log(error.response));
+    } else if (result.dismiss === 'backdrop') {
+    } else if (!result.isConfirmed) {
+    }
+  });
+}
