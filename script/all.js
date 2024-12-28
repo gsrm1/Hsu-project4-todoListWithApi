@@ -243,7 +243,7 @@ function axios_logOut() {
       reloadWindow();
     })
     .catch((error) => {
-      console.log(error.response)
+      console.log(error.response);
       localStorage.clear();
       reloadWindow();
     });
@@ -348,9 +348,7 @@ function updateTodo(todoId) {
       `${url}/todos/${todoId}/toggle`,
       {},
       {
-        headers: {
-          Authorization: localStorage.getItem('localToken'),
-        },
+        headers: { Authorization: localStorage.getItem('localToken') },
       }
     )
     .then(() => updateList())
