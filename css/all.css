@@ -57,7 +57,8 @@ table {
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 html {
@@ -68,6 +69,8 @@ html {
 body {
   min-height: 100vh;
   background: #eee;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   color: #333;
   background-image: linear-gradient(174deg, #ffd370 2%, #ffd370 46%, #ffffff 46%, #ffffff 100%, #e8e8e8 100%);
@@ -109,8 +112,12 @@ h1 span {
   line-height: 2.5rem;
   font-size: 1.2rem;
   padding: 0px 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 .userInfo h4,
 .userInfo p,
@@ -127,7 +134,8 @@ h1 span {
   padding: 1rem;
   border-radius: 10px;
   background: #fff;
-  box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.15);
+  -webkit-box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.15);
+          box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.15);
 }
 
 input[type=text] {
@@ -138,20 +146,39 @@ input[type=text] {
   padding-right: 1rem;
   color: #333;
 }
+input[type=text]::-webkit-input-placeholder {
+  color: #9f9a91;
+}
+input[type=text]::-moz-placeholder {
+  color: #9f9a91;
+}
+input[type=text]:-ms-input-placeholder {
+  color: #9f9a91;
+}
+input[type=text]::-ms-input-placeholder {
+  color: #9f9a91;
+}
 input[type=text]::placeholder {
   color: #9f9a91;
 }
 
 .input {
   padding: 4px 4px 4px 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
 }
 
 #addBTN {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   line-height: 37px;
-  justify-content: center;
-  flex-shrink: 0;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
   width: 40px;
   height: 40px;
   border-radius: 10px;
@@ -166,6 +193,8 @@ input[type=text]::placeholder {
 }
 
 #tab {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   text-align: center;
   color: #9f9a91;
@@ -227,14 +256,15 @@ input[type=text]::placeholder {
   opacity: 0;
   right: 0;
   top: 50%;
-  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
   text-decoration: none;
   color: #333;
   display: block;
   width: 1rem;
   height: 1rem;
   background: #000;
-  background-image: url(https://i.imgur.com/H4rXTeT.jpg);
+  background-image: url(/image/deleteIcon.jpg);
   background-size: contain;
 }
 @media (max-width: 575px) {
@@ -253,7 +283,8 @@ input[type=text]::placeholder {
   opacity: 0;
   right: 7%;
   top: 50%;
-  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
   text-decoration: none;
   color: #333;
   display: block;
@@ -272,9 +303,15 @@ input[type=text]::placeholder {
 }
 
 .listFooter {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   padding: 1.5rem 2rem 1rem 0.5rem;
   font-size: 14px;
 }
@@ -290,7 +327,10 @@ input[type=text]::placeholder {
 
 .checkbox {
   position: relative;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
   width: 100%;
   display: block;
   padding-left: 44px;
@@ -323,12 +363,14 @@ input[type=text]::placeholder {
   position: absolute;
   left: 0.5rem;
   top: 50%;
-  transform: translateY(-50%) scale(1);
+  -webkit-transform: translateY(-50%) scale(1);
+          transform: translateY(-50%) scale(1);
   height: 20px;
   width: 20px;
   border-radius: 5px;
   border: 1px solid #333;
   pointer-events: none;
+  -webkit-transition: 0.3s ease;
   transition: 0.3s ease;
 }
 .checkbox span::after {
@@ -336,7 +378,8 @@ input[type=text]::placeholder {
   position: absolute;
   left: 14px;
   top: 35%;
-  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
   height: 15px;
   width: 0.5rem;
   border-radius: 1px;
@@ -344,6 +387,7 @@ input[type=text]::placeholder {
   border-right: 3px solid #ffd370;
   pointer-events: none;
   opacity: 0;
+  -webkit-transition: 0.3s ease;
   transition: 0.3s ease;
 }
 .checkbox input:checked ~ span {
@@ -352,7 +396,8 @@ input[type=text]::placeholder {
 }
 .checkbox input:checked ~ span::before {
   border-color: transparent;
-  transform: translateY(-50%) scale(0);
+  -webkit-transform: translateY(-50%) scale(0);
+          transform: translateY(-50%) scale(0);
 }
 .checkbox input:checked ~ span::after {
   opacity: 1;
@@ -370,11 +415,16 @@ img {
 .signUp {
   width: 1028px;
   margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
 }
 @media (max-width: 575px) {
   .signUp {
-    flex-direction: column-reverse;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: column-reverse;
+            flex-direction: column-reverse;
     margin: auto;
   }
 }
@@ -414,8 +464,13 @@ img {
 .signUp .signArea {
   width: 50%;
   padding: 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 @media (max-width: 575px) {
   .signUp .signArea {
@@ -449,8 +504,13 @@ img {
   width: 75%;
   font-size: 1.7rem;
   margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 @media (max-width: 575px) {
   .signUp .signArea .input {
@@ -474,6 +534,18 @@ img {
     margin-bottom: 5px;
   }
 }
+.signUp .signArea .input input::-webkit-input-placeholder {
+  font-size: 1rem;
+}
+.signUp .signArea .input input::-moz-placeholder {
+  font-size: 1rem;
+}
+.signUp .signArea .input input:-ms-input-placeholder {
+  font-size: 1rem;
+}
+.signUp .signArea .input input::-ms-input-placeholder {
+  font-size: 1rem;
+}
 .signUp .signArea .input input::placeholder {
   font-size: 1rem;
 }
@@ -481,8 +553,13 @@ img {
   width: 75%;
   font-size: 1.7rem;
   margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   padding: 15px;
 }
 .signUp .signArea .btn button {
@@ -534,8 +611,13 @@ img {
 .signUp .signArea2 {
   width: 50%;
   padding: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 @media (max-width: 575px) {
   .signUp .signArea2 {
@@ -563,8 +645,13 @@ img {
   width: 75%;
   font-size: 1.5rem;
   margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 @media (max-width: 575px) {
   .signUp .signArea2 .input {
@@ -582,10 +669,34 @@ img {
 .signUp .signArea2 .input label {
   margin-bottom: 5px;
 }
+.signUp .signArea2 .input input::-webkit-input-placeholder {
+  font-size: 1rem;
+}
+.signUp .signArea2 .input input::-moz-placeholder {
+  font-size: 1rem;
+}
+.signUp .signArea2 .input input:-ms-input-placeholder {
+  font-size: 1rem;
+}
+.signUp .signArea2 .input input::-ms-input-placeholder {
+  font-size: 1rem;
+}
 .signUp .signArea2 .input input::placeholder {
   font-size: 1rem;
 }
 @media (max-width: 575px) {
+  .signUp .signArea2 .input input::-webkit-input-placeholder {
+    font-size: 0.7rem;
+  }
+  .signUp .signArea2 .input input::-moz-placeholder {
+    font-size: 0.7rem;
+  }
+  .signUp .signArea2 .input input:-ms-input-placeholder {
+    font-size: 0.7rem;
+  }
+  .signUp .signArea2 .input input::-ms-input-placeholder {
+    font-size: 0.7rem;
+  }
   .signUp .signArea2 .input input::placeholder {
     font-size: 0.7rem;
   }
@@ -594,8 +705,13 @@ img {
   width: 75%;
   font-size: 1.7rem;
   margin: 0 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
   padding: 15px;
 }
 .signUp .signArea2 .btn button {
